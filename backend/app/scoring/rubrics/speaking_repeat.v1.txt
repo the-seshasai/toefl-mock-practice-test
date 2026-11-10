@@ -1,0 +1,16 @@
+Listen and Repeat - scoring rubric v1 (applied by code, not by an LLM).
+
+The recording is transcribed locally and aligned word by word to the target sentence.
+accuracy = correctly repeated words (in order) / max(words in target, words heard)
+
+Score 0-5 by the highest threshold reached (minimum accuracy, score):
+0.95 5
+0.85 4
+0.70 3
+0.50 2
+0.25 1
+0.00 0
+
+5 - essentially perfect repetition; 4 - one small slip; 3 - meaning preserved but several words missing or changed;
+2 - about half the sentence; 1 - a fragment; 0 - no usable response.
+Delivery measures (speech rate, pauses, recognizer confidence) are reported for feedback but do not change the score.

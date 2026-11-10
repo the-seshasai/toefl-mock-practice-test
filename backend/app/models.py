@@ -31,6 +31,7 @@ class Item(Base):
     topic: Mapped[str] = mapped_column(String(120), default="")
     content_hash: Mapped[str] = mapped_column(String(64))
     payload: Mapped[dict] = mapped_column(JSON)
+    source: Mapped[str] = mapped_column(String(12), default="generated")  # generated | seed
     served: Mapped[bool] = mapped_column(default=False, index=True)  # False = in fallback/pre-generated bank
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
 
@@ -42,6 +43,7 @@ class Attempt(Base):
     mode: Mapped[str] = mapped_column(String(20))  # full | section | task
     difficulty: Mapped[str] = mapped_column(String(20))
     exam_mode: Mapped[str] = mapped_column(String(20), default="exam")  # exam | practice
+    timed: Mapped[bool] = mapped_column(default=True)  # timers enforced server-side
     status: Mapped[str] = mapped_column(String(20), default="in_progress")
     overall_band: Mapped[float | None] = mapped_column(Float, nullable=True)
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
@@ -58,7 +60,8 @@ class SectionAttempt(Base):
     section: Mapped[str] = mapped_column(String(20))
     status: Mapped[str] = mapped_column(String(20), default="pending")
     band: Mapped[float | None] = mapped_column(Float, nullable=True)
-    deadline: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    meta: Mapped[dict] = mapped_column(JSON, default=dict)  # exam state: stage, tasks[{task_type,budget_seconds,deadline}], current, route
+    gen: Mapped[dict | None] = mapped_column(JSON, default=dict, nullable=True)  # state owned by the generation job (never by requests)
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     attempt: Mapped[Attempt] = relationship(back_populates="sections")
@@ -74,7 +77,9 @@ class Response(Base):
     section_attempt_id: Mapped[int] = mapped_column(ForeignKey("section_attempts.id"), index=True)
     item_id: Mapped[int] = mapped_column(ForeignKey("items.id"))
     position: Mapped[int] = mapped_column(Integer, default=0)
+    stage: Mapped[str] = mapped_column(String(10), default="main", index=True)  # main | router | lower | upper
     answer: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    meta: Mapped[dict] = mapped_column(JSON, default=dict)  # audio plays: {plays, first_play_at}
     transcript: Mapped[str | None] = mapped_column(Text, nullable=True)
     score: Mapped[float | None] = mapped_column(Float, nullable=True)
     max_score: Mapped[float | None] = mapped_column(Float, nullable=True)

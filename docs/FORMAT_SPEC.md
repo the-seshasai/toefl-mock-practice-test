@@ -90,3 +90,19 @@ Router ≈ 18 min; second stage Lower ≈ 7 min / Upper ≈ 11 min (blueprint).
 | 1–2  | A1–A2 | Beginner (target band ~2–3) |
 | 3–4  | B1–B2 | Intermediate (~3.5–4.5) |
 | 5–6  | C1–C2 | Advanced (~5–6) |
+
+## How this app implements the spec
+
+The blueprint above is the contract; where ETS is silent the app chooses and records it in `DECISIONS.md`.
+
+| Topic | Implementation |
+|---|---|
+| Two-stage adaptive Reading/Listening | Module 1 at the chosen level; Module 2 one level easier or harder if Module 1 scores below or at/above 60% (D-25) |
+| Reading time | Module 1 21 min + Module 2 9 min = 30 min (blueprint: 18-21 min + 9 min) |
+| Listening time | Module 1 18 min + Module 2 of 7 min (easier) or 11 min (harder), matching the blueprint |
+| Scored points | Reading about 50 and Listening about 47-50 *scored* items; ETS's 35-point raw scores include unscored pretest items we do not model |
+| Writing | 10 Build a Sentence + Email + Academic Discussion in 23 min (6 / 7 / 10 min per task, our split) |
+| Speaking | 7 Listen and Repeat + 4 interview questions in 8 min (3 / 5 min per task, our split) |
+| Section band | 1-6 in 0.5 steps; adaptive sections combine modules by point weight (D-26) |
+| Overall band | Average of the four sections rounded to the nearest 0.5 (ETS wording) |
+| Single-task / weak-spot sessions | Not adaptive: one stage, the usual set sizes and timers |

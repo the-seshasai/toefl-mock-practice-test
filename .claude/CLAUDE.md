@@ -9,9 +9,9 @@ before each exam. It runs on the user's own laptop; there are no accounts and no
 ## Environment constraints (respect these)
 - Dev machine: Ubuntu, 8 GB RAM, **no GPU**. Everything local must run on CPU.
 - **Port 8000 is taken.** Backend runs on **8001**, frontend dev server on **5173**.
-- LLM access: default provider is **Gemini** (`gemini-flash-lite-latest`, free tier, rate limited).
-  OpenAI quota is exhausted, so do not use it. Claude API is an optional provider.
-  All LLM calls go through one provider interface so the provider is swappable via `.env`.
+- LLM access: **local Claude Code only** (`claude -p` headless, using the user's own Claude Code login).
+  No Gemini, no OpenAI, no Anthropic API key. All LLM calls go through one provider interface
+  (`backend/app/llm/`), implemented by `ClaudeCodeProvider`. Model is chosen via `CLAUDE_MODEL` in `.env`.
 - Never hardcode API keys. Read from `.env`; keep `.env.example` up to date.
 
 ## Tech stack
@@ -31,7 +31,7 @@ toefl-app/
       main.py
       config.py              # reads .env, ports, model names
       db.py, models.py, schemas.py
-      llm/                   # provider interface + gemini.py (+ claude.py optional)
+      llm/                   # provider interface + claude_code.py (local `claude -p`)
       generators/            # one module per task type
       validators/            # one validator per task type
       scoring/               # rubric scoring + band conversion
@@ -72,7 +72,7 @@ If official ETS practice material contradicts `FORMAT_SPEC.md`, update the spec 
    blanks are valid word fragments, Build a Sentence has one defensible ordering). Retry up to 3 times,
    then fall back to a cached item from the pre-generated bank.
 4. **Pre-generate in the background** per exam so the user is never waiting mid-section.
-   Respect Gemini rate limits: queue, backoff, and cache.
+   Calls are ~3 s each and use the user's Claude Code plan: queue, retry, and cache.
 5. **No real ETS content.** Generate original items only; never reproduce copyrighted test material.
 
 ## Exam-runner behavior
